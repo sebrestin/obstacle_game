@@ -1,0 +1,21 @@
+{
+  "name": "obstacle_game",
+  "version": "1.0.0",
+  "description": "small game to jump over obstacles",
+  "main": "../scripts/main.ts",
+  "scripts": {
+    "build": "webpack ./webpack.config.js -p",
+    "start": "webpack-dev-server ./webpack.config.js --content-base ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "lite-server": "^2.3.0",
+    "ts-loader": "^4.3.0",
+    "typescript": "^2.8.3",
+    "webpack": "4.1.1",
+    "webpack-cli": "2.0.11",
+    "webpack-dev-server": "3.1.1"
+  }
+}
