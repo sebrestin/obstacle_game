@@ -1,6 +1,7 @@
-import { GameEngine } from './elements';
+import { GameEngine } from './Elements';
 
 window.onload = () => {
+    window.alert('Start Game');
     var world:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('world');
     var ctx = world.getContext("2d");
     if (ctx) {
