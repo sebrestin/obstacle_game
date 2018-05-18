@@ -3,7 +3,7 @@ import { Movable, Rigid, SimpleRectangleCollider, Gravity } from './Physics';
 import { GameObject, AnimatedGameObject, StaticGameObject } from './GameObjects';  
 
 
-class Hero extends AnimatedGameObject implements Movable, Rigid {
+export class Hero extends AnimatedGameObject implements Movable, Rigid {
     name:string = 'Bird';
     media_path:Array<string> = ['/media/hero/frame_0_delay-0.1s.gif', '/media/hero/frame_1_delay-0.1s.gif',
                                 '/media/hero/frame_2_delay-0.1s.gif', '/media/hero/frame_3_delay-0.1s.gif',
@@ -126,7 +126,7 @@ export class GameEngine {
         this.eventRegistry.registerEvent(EventType.KEY_UP,
             (e: KeyboardEvent) => {
                 if (e.key === 'ArrowUp') {
-                    let target = new Position(this.hero.position.x, this.hero.position.y - 100)
+                    let target = new Position(this.hero.position.x, this.hero.position.y - 50)
                     this.hero.move(target);
                 }
             }
@@ -153,7 +153,7 @@ export class GameEngine {
             () => {
                 gravity.apply();
             },
-            1000
+            10
         );
 
         // spawn new obstacle

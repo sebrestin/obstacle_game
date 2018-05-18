@@ -47,7 +47,7 @@ export class SimpleRectangleCollider implements Collider {
 }
 
 export class Gravity {
-    speed:number = 100;
+    speed:number = 1;
     ground: Position = new Position(0, 300);
     constructor(private objects: Array<Movable>) { }
 
