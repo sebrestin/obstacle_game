@@ -1,5 +1,5 @@
 import { Position } from './Geometry';
-import { Movable, Rigid, SimpleRectangleCollider, Gravity } from './Physics';
+import { Movable, Rigid, SimpleRectangleCollider, Gravity, CollisionArea } from './Physics';
 import { GameObject, AnimatedGameObject, StaticGameObject } from './GameObjects';  
 
 
@@ -11,20 +11,11 @@ export class Hero extends AnimatedGameObject implements Movable, Rigid {
                                 '/media/hero/frame_6_delay-0.1s.gif', '/media/hero/frame_7_delay-0.1s.gif'];
     width:number = 100;
     height:number = 100;
-    position:Position = new Position(0, 300);
+    position:Position = new Position(0, 0);
 
-    topLeft():Position {
-        return new Position(this.position.x, this.position.y);
-    }
-
-    topRight():Position {
-        return new Position(this.position.x + 50, this.position.y);
-    }
-    bottomLeft():Position {
-        return new Position(this.position.x, this.position.y + 50);
-    }
-    bottomRight():Position {
-        return new Position(this.position.x + 50, this.position.y + 50);
+    getCollisionArea() {
+        let center = new Position(this.position.x + this.width / 2, this.position.y + this.height / 2);
+        return new CollisionArea(center, 60, 60);
     }
 
     move(target: Position): void {
@@ -33,25 +24,16 @@ export class Hero extends AnimatedGameObject implements Movable, Rigid {
 
 }
 
-class Obstacle extends StaticGameObject implements Movable, Rigid {
+export class Obstacle extends StaticGameObject implements Movable, Rigid {
     name:string = 'Wall';
     media_path:string = '/media/obstacle_one.png';
     width:number = 100;
     height:number = 100;
     position:Position = new Position(900, 300);
 
-    topLeft():Position {
-        return new Position(this.position.x, this.position.y);
-    }
-
-    topRight():Position {
-        return new Position(this.position.x + 50, this.position.y);
-    }
-    bottomLeft():Position {
-        return new Position(this.position.x, this.position.y + 50);
-    }
-    bottomRight():Position {
-        return new Position(this.position.x + 50, this.position.y + 50);
+    getCollisionArea() {
+        let center = new Position(this.position.x + this.width / 2, this.position.y + this.height / 2);
+        return new CollisionArea(center, 50, 50);
     }
 
     move(target: Position): void {
@@ -65,27 +47,18 @@ class Plane extends StaticGameObject implements Movable, Rigid {
     media_path:string = '/media/plane.png';
     width:number = 200;
     height:number = 150;
+
     position:Position = new Position(900, 100);
 
-    topLeft():Position {
-        return new Position(this.position.x, this.position.y);
-    }
-
-    topRight():Position {
-        return new Position(this.position.x + 180, this.position.y);
-    }
-    bottomLeft():Position {
-        return new Position(this.position.x, this.position.y + 150);
-    }
-    bottomRight():Position {
-        return new Position(this.position.x + 180, this.position.y + 150);
+    getCollisionArea() {
+        let center = new Position(this.position.x + this.width / 2, this.position.y + this.height / 2);
+        return new CollisionArea(center, 160, 120);
     }
 
     move(target: Position): void {
         this.position = target;
     }
 }
-
 
 
 enum EventType {KEY_UP, GENERAL};
@@ -136,7 +109,7 @@ export class GameEngine {
         this.eventRegistry.registerEvent(EventType.GENERAL,
             () => {
                 let firstObstacle = this.obstacles[0];
-                let collider = new SimpleRectangleCollider(this.hero, firstObstacle);
+                let collider = new SimpleRectangleCollider(this.hero.getCollisionArea(), firstObstacle.getCollisionArea());
                 if (collider.collide()) {
                         this.stop();
                         window.alert('Game Over!');
