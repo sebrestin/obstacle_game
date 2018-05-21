@@ -1,9 +1,9 @@
 import { Position } from './Geometry';
-import { Movable, Rigid, SimpleRectangleCollider, Gravity, CollisionArea } from './Physics';
+import { Rigid, SimpleRectangleCollider, Gravity, CollisionArea } from './Physics';
 import { GameObject, AnimatedGameObject, StaticGameObject } from './GameObjects';  
 
 
-export class Hero extends AnimatedGameObject implements Movable, Rigid {
+export class Hero extends AnimatedGameObject implements Rigid {
     name:string = 'Bird';
     media_path:Array<string> = ['/media/hero/frame_0_delay-0.1s.gif', '/media/hero/frame_1_delay-0.1s.gif',
                                 '/media/hero/frame_2_delay-0.1s.gif', '/media/hero/frame_3_delay-0.1s.gif',
@@ -18,13 +18,9 @@ export class Hero extends AnimatedGameObject implements Movable, Rigid {
         return new CollisionArea(center, 60, 60);
     }
 
-    move(target: Position): void {
-        this.position = target;
-    }
-
 }
 
-export class Obstacle extends StaticGameObject implements Movable, Rigid {
+export class Obstacle extends StaticGameObject implements Rigid {
     name:string = 'Wall';
     media_path:string = '/media/obstacle_one.png';
     width:number = 100;
@@ -42,7 +38,7 @@ export class Obstacle extends StaticGameObject implements Movable, Rigid {
 }
 
 
-class Plane extends StaticGameObject implements Movable, Rigid {
+class Plane extends StaticGameObject implements Rigid {
     name:string = 'Plane';
     media_path:string = '/media/plane.png';
     width:number = 200;
@@ -111,10 +107,10 @@ export class GameEngine {
                 let firstObstacle = this.obstacles[0];
                 let collider = new SimpleRectangleCollider(this.hero.getCollisionArea(), firstObstacle.getCollisionArea());
                 if (collider.collide()) {
-                        this.stop();
-                        window.alert('Game Over!');
-                        this.start();
-                    }
+                    this.stop();
+                    window.alert('Game Over!');
+                    this.start();
+                }
             },
             100
         );

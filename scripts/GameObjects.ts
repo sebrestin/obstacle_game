@@ -1,15 +1,19 @@
 import { Position } from './Geometry';
 
-export interface GameObject {
+export abstract class GameObject {
     name: string; // name of the object
     width: number;
     height: number;
     position: Position;
 
-    draw(context): void;
+    abstract draw(context): void;
+
+    move(target: Position): void {
+        this.position = target;
+    }
 }
 
-export class StaticGameObject implements GameObject {
+export class StaticGameObject extends GameObject {
     name: string; // name of the object
     media_path:string; // path to the png
     width: number;
@@ -25,7 +29,7 @@ export class StaticGameObject implements GameObject {
     }
 }
 
-export class AnimatedGameObject implements GameObject {
+export class AnimatedGameObject extends GameObject {
     name: string; // name of the object
     media_path:Array<string>; // path to the png
     width: number;

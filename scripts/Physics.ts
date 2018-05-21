@@ -1,10 +1,6 @@
 import { Position } from './Geometry';
 import { GameObject } from './GameObjects';
 
-export interface Movable extends GameObject {
-    move(target: Position): void;
-}
-
 export interface Rigid {
     getCollisionArea():CollisionArea;
 }
@@ -47,7 +43,7 @@ export class SimpleRectangleCollider implements Collider {
 export class Gravity {
     speed:number = 1;
     ground: Position = new Position(0, 300);
-    constructor(private objects: Array<Movable>) { }
+    constructor(private objects: Array<GameObject>) { }
 
     apply(): void {
         for (let object of this.objects) {
