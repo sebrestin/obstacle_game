@@ -31,10 +31,6 @@ export class Obstacle extends StaticGameObject implements Rigid {
         let center = new Position(this.position.x + this.width / 2, this.position.y + this.height / 2);
         return new CollisionArea(center, 50, 50);
     }
-
-    move(target: Position): void {
-        this.position = target;
-    }
 }
 
 
@@ -49,10 +45,6 @@ class Plane extends StaticGameObject implements Rigid {
     getCollisionArea() {
         let center = new Position(this.position.x + this.width / 2, this.position.y + this.height / 2);
         return new CollisionArea(center, 160, 120);
-    }
-
-    move(target: Position): void {
-        this.position = target;
     }
 }
 
@@ -74,39 +66,36 @@ class EventRegistry {
         for (let event of this.events) {
             clearInterval(event);
         }
+        this.events = new Array<number>();
+    }
+
+    size() {
+        return this.events.length;
     }
 }
 
 
 export class GameEngine {
     hero:Hero;
-    obstacles:Array<Obstacle|Plane>;
-    events:Array<number> = new Array<number>();
-    animationFrame:number;
+    obstacles:Array<Obstacle|Plane> = new Array<Obstacle|Plane>();
+    animationFrame:number = 0;
 
-    private eventRegistry:EventRegistry = new EventRegistry();
+    public eventRegistry:EventRegistry = new EventRegistry();
     constructor(private context: CanvasRenderingContext2D) {}
 
     start() {
-        this.hero = new Hero();
-        this.obstacles = [new Obstacle()];
+        this.spawnHero();
+        this.spawnObstacle();
+
+        let gravity = new Gravity([this.hero]);
        
         // register event
-        this.eventRegistry.registerEvent(EventType.KEY_UP,
-            (e: KeyboardEvent) => {
-                if (e.key === 'ArrowUp') {
-                    let target = new Position(this.hero.position.x, this.hero.position.y - 50)
-                    this.hero.move(target);
-                }
-            }
-        );
+        this.eventRegistry.registerEvent(EventType.KEY_UP, (e: KeyboardEvent) => this.arrowKeyUp(e));
 
         // game over / detect collision
         this.eventRegistry.registerEvent(EventType.GENERAL,
             () => {
-                let firstObstacle = this.obstacles[0];
-                let collider = new SimpleRectangleCollider(this.hero.getCollisionArea(), firstObstacle.getCollisionArea());
-                if (collider.collide()) {
+                if (this.detectCollision()) {
                     this.stop();
                     window.alert('Game Over!');
                     this.start();
@@ -116,50 +105,64 @@ export class GameEngine {
         );
 
         // gravity event
-        let gravity = new Gravity([this.hero]);
-        this.eventRegistry.registerEvent(
-            EventType.GENERAL,
-            () => {
-                gravity.apply();
-            },
-            10
-        );
+        this.eventRegistry.registerEvent(EventType.GENERAL, () => gravity.apply(), 10);
 
         // spawn new obstacle
-        this.eventRegistry.registerEvent(EventType.GENERAL,
-            () => {
-                if (Math.floor((Math.random() * 10) + 1) % 3 === 0) {
-                    let obstacle: Plane = new Plane();
-                    obstacle.draw(this.context);
-                    this.obstacles.push(obstacle);
-                } else {
-                    let obstacle: Obstacle = new Obstacle();
-                    obstacle.draw(this.context);
-                    this.obstacles.push(obstacle);
-                }
-            },
-            2000
-        )
-
+        this.eventRegistry.registerEvent(EventType.GENERAL, () => this.spawnObstacle(), 2000)
+        
         // check if obstacles are alive
-        this.eventRegistry.registerEvent(EventType.GENERAL,
-            () => {
-                let alive_obstacles: Array<Obstacle|Plane> = new Array<Obstacle|Plane>();
-                for (let obstacle of this.obstacles) {
-                    let position: Position = new Position(obstacle.position.x - 10, obstacle.position.y);
-                    obstacle.move(position);
+        this.eventRegistry.registerEvent(EventType.GENERAL, () => this.slideObstacles(), 50);        
 
-                    if (obstacle.position.x > -obstacle.width) {
-                        alive_obstacles.push(obstacle);
-                    }
-                }
-                this.obstacles = alive_obstacles;
-            },
-            50
-        );        
+        // garbage collect obstacles
+        this.eventRegistry.registerEvent(EventType.GENERAL, () => this.garbageCollectObstacles(), 51);
 
         // redraw world
         this.animationFrame = window.requestAnimationFrame(() => this.draw());
+    }
+
+    arrowKeyUp(e: KeyboardEvent) {
+        if (e.key === 'ArrowUp') {
+            let target = new Position(this.hero.position.x, this.hero.position.y - 30)
+            this.hero.move(target);
+        }
+    }
+
+    spawnHero() {
+        this.hero = new Hero();
+    }
+
+    spawnObstacle() {
+        if (Math.floor((Math.random() * 10) + 1) % 3 === 0) {
+            let obstacle: Plane = new Plane();
+            obstacle.draw(this.context);
+            this.obstacles.push(obstacle);
+        } else {
+            let obstacle: Obstacle = new Obstacle();
+            obstacle.draw(this.context);
+            this.obstacles.push(obstacle);
+        }
+    }
+
+    garbageCollectObstacles() {
+        for (let idx=0; idx < this.obstacles.length; idx++) {
+            let obstacle = this.obstacles[idx];
+            if (obstacle.position.x <= -obstacle.width) {
+                this.obstacles.splice(idx, 1);
+            }
+        }
+    }
+
+    slideObstacles() {
+        this.obstacles.slice().forEach( obstacle => {
+            let position: Position = new Position(obstacle.position.x - 10, obstacle.position.y);
+            obstacle.move(position);
+        })
+    }
+
+    detectCollision() {
+        let firstObstacle = this.obstacles[0];
+        let collider = new SimpleRectangleCollider(this.hero.getCollisionArea(), firstObstacle.getCollisionArea());
+        return collider.collide();
     }
 
     draw() {
@@ -175,7 +178,10 @@ export class GameEngine {
     }
 
     stop() {
+        this.obstacles = new Array<Obstacle|Plane>();
+        this.hero = null;
         this.eventRegistry.unregisterAllEvents();
         window.cancelAnimationFrame(this.animationFrame);
+        this.animationFrame = 0;
     }
 }

@@ -5,11 +5,12 @@ module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '.',
+    basePath: '',
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ["jasmine", "karma-typescript"],
+    frameworks: ["jasmine", "karma-typescript", 'jasmine-dom-matchers'],
+
 
     // list of files / patterns to load in the browser
     files: [
@@ -22,6 +23,20 @@ module.exports = function(config) {
           module: "commonjs"
       },
       tsconfig: "./tsconfig.json",
+    },
+
+    client: {
+      //If false, Karma will not remove iframes upon the completion of running the tests
+      clearContext:false,
+      //karma-html configuration
+      karmaHTML: {
+        source: [
+          //indicate 'index.html' file that will be loaded in the browser
+          //the 'index' tag will be used to get the access to the Document object of 'index.html'
+          {src:'./index.html', tag:'index'}
+        ],
+        auto: true
+      }
     },
 
     // list of files / patterns to exclude
@@ -39,7 +54,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ["progress", "karma-typescript"],
+    reporters: ["progress", "karma-typescript", 'karmaHTML'],
 
     // web server port
     port: 9876,
