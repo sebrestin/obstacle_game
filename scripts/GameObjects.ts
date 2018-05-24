@@ -56,8 +56,9 @@ export class AnimatedGameObject extends GameObject {
     height: number;
     position: Position;
 
+    public  animationSpeed:number = 3;
     private animation:number = 0;
-    private animationVelocity:number = 0;
+    private animationFrames:number = 0;
     private images:Array<HTMLImageElement> = new Array<HTMLImageElement>();
     private loadedImages:Array<boolean> = new Array<boolean>();
 
@@ -84,12 +85,12 @@ export class AnimatedGameObject extends GameObject {
 
     draw(context): void {
         if (this.isLoaded()) {
-            let image = this.images[this.animation % 8];
+            let image = this.images[this.animation];
             context.drawImage(image, this.position.x, this.position.y, this.width, this.height);
-            if (this.animationVelocity % 4 === 0) {
-                this.animation++;
+            if (this.animationFrames % this.animationSpeed === 0) {
+                this.animation = (this.animation+1) % this.loadedImages.length ;
             }
-            this.animationVelocity++;
+            this.animationFrames++;
         } else {
             this.load();
             context.fillStyle = 'black';
