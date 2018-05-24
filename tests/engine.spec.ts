@@ -1,6 +1,5 @@
 import { Hero, GameEngine } from '../scripts/Elements';
 import { wait } from './utils';
-import { ENGINE_METHOD_ALL } from 'constants';
 
 declare var karmaHTML:any;
 
@@ -10,9 +9,9 @@ describe('Test Engine behaviour', () => {
     beforeAll((done) => {
         karmaHTML.index.open();
         wait(done);
-      });
+    });
 
-    beforeEach(()=>{
+    beforeEach(() => {
         let world: HTMLCanvasElement = <HTMLCanvasElement>karmaHTML.index.document.getElementById('world');
         let ctx = world.getContext('2d');
         engine = new GameEngine(ctx);

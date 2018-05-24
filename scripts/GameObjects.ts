@@ -7,6 +7,8 @@ export abstract class GameObject {
     position: Position;
 
     abstract draw(context): void;
+    abstract load(): void;
+    abstract isLoaded(): boolean;
 
     move(target: Position): void {
         this.position = target;
@@ -20,12 +22,30 @@ export class StaticGameObject extends GameObject {
     height: number;
     position: Position;
 
-    draw(context): void {
-        let image:HTMLImageElement = new Image();
-        image.src = this.media_path;
+    private image:HTMLImageElement = null;
+    private imageLoaded:boolean = false;
 
-        console.log('Loaded obstacle');
-        context.drawImage(image, this.position.x, this.position.y, this.width, this.height);
+    load() {
+        if (this.image === null)
+            this.image = new Image();
+        this.image.src = this.media_path;
+        this.image.onload = () => {
+            this.imageLoaded = true;
+        }
+    }
+
+    isLoaded(): boolean {
+        return this.imageLoaded;
+    }
+
+    draw(context): void {
+        if (this.isLoaded()) {
+            context.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+        } else {
+            this.load();
+            context.fillStyle = 'black';
+            context.fillRect(this.position.x, this.position.y, this.width, this.height);
+        }
     }
 }
 
@@ -38,16 +58,42 @@ export class AnimatedGameObject extends GameObject {
 
     private animation:number = 0;
     private animationVelocity:number = 0;
+    private images:Array<HTMLImageElement> = new Array<HTMLImageElement>();
+    private loadedImages:Array<boolean> = new Array<boolean>();
+
+    load() {
+        this.media_path.slice().forEach(
+            (path, idx)=>{
+                let image:HTMLImageElement = null;
+                if (this.loadedImages.length <=  idx) {
+                    image = new Image();
+                    this.images.push(image);
+                    this.loadedImages.push(false);
+                } else {
+                    image = this.images[idx];
+                }
+                image.src = path;
+                image.onload = () => this.loadedImages[idx] = true;
+            }
+        )
+    }
+
+    isLoaded(): boolean {
+        return this.loadedImages.length !== 0 && this.loadedImages.reduce((a,b)=>a&&b);
+    }
 
     draw(context): void {
-        let image:HTMLImageElement = new Image();
-        image.src = this.media_path[this.animation % 8];
-        console.log('Loaded hero');
-        context.drawImage(image, this.position.x, this.position.y, this.width, this.height);
-
-        if (this.animationVelocity % 4 === 0) {
-            this.animation++;
+        if (this.isLoaded()) {
+            let image = this.images[this.animation % 8];
+            context.drawImage(image, this.position.x, this.position.y, this.width, this.height);
+            if (this.animationVelocity % 4 === 0) {
+                this.animation++;
+            }
+            this.animationVelocity++;
+        } else {
+            this.load();
+            context.fillStyle = 'black';
+            context.fillRect(this.position.x, this.position.y, this.width, this.height);
         }
-        this.animationVelocity++;
     }
 }

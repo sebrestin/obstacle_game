@@ -81,7 +81,7 @@ export class GameEngine {
     animationFrame:number = 0;
 
     public eventRegistry:EventRegistry = new EventRegistry();
-    constructor(private context: CanvasRenderingContext2D) {}
+    constructor(public context: CanvasRenderingContext2D) {}
 
     start() {
         this.spawnHero();
@@ -166,7 +166,6 @@ export class GameEngine {
     }
 
     draw() {
-        console.log('Redraw world');
         this.animationFrame = window.requestAnimationFrame(() => this.draw());
 
         this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);

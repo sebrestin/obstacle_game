@@ -1,6 +1,6 @@
 declare var karmaHTML:any;
 
-function sleep(ms) {
+export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 

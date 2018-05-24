@@ -5,24 +5,31 @@ module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: '.',
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ["jasmine", "karma-typescript", 'jasmine-dom-matchers'],
+    frameworks: ['jasmine', 'karma-typescript', 'jasmine-dom-matchers'],
 
 
     // list of files / patterns to load in the browser
     files: [
-      { pattern: "scripts/**/*.ts" },
-      { pattern: "tests/**/*.ts" },
+      { pattern: 'scripts/**/*.ts' },
+      { pattern: 'tests/**/*.ts' },
+      { pattern: 'media/**/*.gif', watched:false, served:true, included:false, nocache: false },
+      { pattern: 'media/*.png', watched:false, served:true, included:false, nocache: false },
+
     ],
 
+    proxies: {
+      '/media/': '/base/media/'
+    },
+    
     karmaTypescriptConfig: {
       compilerOptions: {
-          module: "commonjs"
+          module: 'commonjs'
       },
-      tsconfig: "./tsconfig.json",
+      tsconfig: './tsconfig.json',
     },
 
     client: {
@@ -48,13 +55,13 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        "**/*.ts": "karma-typescript" // *.tsx for React Jsx
+        '**/*.ts': 'karma-typescript' // *.tsx for React Jsx
     },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ["progress", "karma-typescript", 'karmaHTML'],
+    reporters: ['progress', 'karma-typescript', 'karmaHTML'],
 
     // web server port
     port: 9876,
@@ -75,7 +82,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['Firefox', 'Chrome'],
 
 
     // Continuous Integration mode
