@@ -91,6 +91,6 @@ describe('Test Engine behaviour', () => {
             }
            
             done();
-        }, 100);
+        }, 300);
     });
 });
