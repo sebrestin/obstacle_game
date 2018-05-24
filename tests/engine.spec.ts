@@ -1,10 +1,11 @@
 import { Hero, GameEngine } from '../scripts/Elements';
 import { wait } from './utils';
+import { Position } from '../scripts/Geometry';
 
-declare var karmaHTML:any;
+declare var karmaHTML: any;
 
 describe('Test Engine behaviour', () => {
-    var engine:GameEngine;
+    var engine: GameEngine;
 
     beforeAll((done) => {
         karmaHTML.index.open();
@@ -66,16 +67,35 @@ describe('Test Engine behaviour', () => {
         expect(engine.obstacles.length).toBe(0);
     });
 
+    it('Test score inscreases', () => {
+        engine.spawnScore();
+        engine.spawnObstacle();
+        for (let i = 0; i < 110; i++) {
+            engine.slideObstacles();
+        }
+        engine.garbageCollectObstacles();
+        expect(engine.obstacles.length).toBe(0);
+        expect(engine.score.points).toBe(1);
+    });
+
+    it('Test arrow key up cannot move hero out of canvas', () => {
+        engine.spawnHero();
+        let event = new KeyboardEvent('keyup', { key: 'ArrowUp' });
+        engine.arrowKeyUp(event);
+        expect(engine.hero.position.y).toBe(0);
+    });
+
     it('Test arrow key up', () => {
         engine.spawnHero();
-        let event = new KeyboardEvent('keyup', {key: 'ArrowUp'});
+        engine.hero.move(new Position(0, 60))
+        let event = new KeyboardEvent('keyup', { key: 'ArrowUp' });
         engine.arrowKeyUp(event);
-        expect(engine.hero.position.y).toBe(-30);
+        expect(engine.hero.position.y).toBe(30);
     });
 
     it('Test engine start', () => {
         engine.start();
-        
+
         expect(engine.hero).not.toBe(null);
         expect(engine.hero).not.toBe(undefined);
         expect(engine.hero.position.x).toBe(0);

@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Fri May 18 2018 14:13:57 GMT+0300 (EEST)
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -16,31 +16,31 @@ module.exports = function(config) {
     files: [
       { pattern: 'scripts/**/*.ts' },
       { pattern: 'tests/**/*.ts' },
-      { pattern: 'media/**/*.gif', watched:false, served:true, included:false, nocache: false },
-      { pattern: 'media/*.png', watched:false, served:true, included:false, nocache: false },
-
+      { pattern: 'media/**/*.gif', watched: false, served: true, included: false, nocache: false },
+      { pattern: 'media/**/*.png', watched: false, served: true, included: false, nocache: false },
+      { pattern: 'media/**/*.jpg', watched: false, served: true, included: false, nocache: false },
     ],
 
     proxies: {
       '/media/': '/base/media/'
     },
-    
+
     karmaTypescriptConfig: {
       compilerOptions: {
-          module: 'commonjs'
+        module: 'commonjs'
       },
       tsconfig: './tsconfig.json',
     },
 
     client: {
       //If false, Karma will not remove iframes upon the completion of running the tests
-      clearContext:false,
+      clearContext: false,
       //karma-html configuration
       karmaHTML: {
         source: [
           //indicate 'index.html' file that will be loaded in the browser
           //the 'index' tag will be used to get the access to the Document object of 'index.html'
-          {src:'./index.html', tag:'index'}
+          { src: './index.html', tag: 'index' }
         ],
         auto: true
       }
@@ -55,7 +55,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        '**/*.ts': 'karma-typescript' // *.tsx for React Jsx
+      '**/*.ts': 'karma-typescript' // *.tsx for React Jsx
     },
 
     // test results reporter to use

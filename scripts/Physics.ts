@@ -2,23 +2,23 @@ import { Position } from './Geometry';
 import { GameObject } from './GameObjects';
 
 export interface Rigid {
-    getCollisionArea():CollisionArea;
+    getCollisionArea(): CollisionArea;
 }
 
 export class CollisionArea {
-    constructor(private center:Position, private width:number, private height:number) {}
+    constructor(private center: Position, private width: number, private height: number) { }
 
-    topLeft():Position {
+    topLeft(): Position {
         return new Position(this.center.x - this.width / 2, this.center.y - this.height / 2);
     }
 
-    topRight():Position {
+    topRight(): Position {
         return new Position(this.center.x + this.width / 2, this.center.y - this.height / 2);
     }
-    bottomLeft():Position {
+    bottomLeft(): Position {
         return new Position(this.center.x - this.width / 2, this.center.y + this.height / 2);
     }
-    bottomRight():Position {
+    bottomRight(): Position {
         return new Position(this.center.x + this.width / 2, this.center.y + this.height / 2);
     }
 }
@@ -41,7 +41,7 @@ export class SimpleRectangleCollider implements Collider {
 }
 
 export class Gravity {
-    speed:number = 1;
+    speed: number = 1;
     ground: Position = new Position(0, 300);
     constructor(private objects: Array<GameObject>) { }
 

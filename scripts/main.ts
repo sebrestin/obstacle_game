@@ -1,8 +1,8 @@
 import { GameEngine } from './Elements';
 
-window.onload = () => {
+function startGame() {
     window.alert('Start Game');
-    var world:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('world');
+    var world: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('world');
     var ctx = world.getContext("2d");
     if (ctx) {
         var gameEngine = new GameEngine(ctx);
@@ -11,4 +11,8 @@ window.onload = () => {
     } else {
         console.log('Context is ' + ctx);
     }
+}
+
+window.onload = () => {
+    startGame();
 };
