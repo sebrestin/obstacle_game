@@ -7,7 +7,7 @@ import { Position } from '../scripts/Geometry';
 declare var karmaHTML: any;
 
 describe('Test Engine behaviour', () => {
-    var engine: GameEngine;
+    var engine: GameEngine = null;
 
     beforeAll((done) => {
         karmaHTML.index.open();
@@ -16,7 +16,7 @@ describe('Test Engine behaviour', () => {
 
     beforeEach(() => {
         let world: HTMLCanvasElement = <HTMLCanvasElement>karmaHTML.index.document.getElementById('world');
-        let ctx = world.getContext('2d', { alpha: false });
+        let ctx: CanvasRenderingContext2D = world.getContext('2d', { alpha: false });
         engine = new GameEngine(ctx);
         engine.context.clearRect(0, 0, engine.context.canvas.width, engine.context.canvas.height);
     });

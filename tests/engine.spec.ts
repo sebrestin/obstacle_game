@@ -5,7 +5,7 @@ import { Position } from '../scripts/Geometry';
 declare var karmaHTML: any;
 
 describe('Test Engine behaviour', () => {
-    var engine: GameEngine;
+    var engine: GameEngine = null;
 
     beforeAll((done) => {
         karmaHTML.index.open();
@@ -32,7 +32,7 @@ describe('Test Engine behaviour', () => {
 
     it('Test slide obstacle', () => {
         engine.spawnObstacle();
-        let initialPosition = engine.obstacles[0].position
+        let initialPosition: Position = engine.obstacles[0].position
         engine.slideObstacles();
         expect(engine.obstacles[0].position.x).toBe(initialPosition.x - 10);
         expect(engine.obstacles[0].position.y).toBe(initialPosition.y);
@@ -48,7 +48,7 @@ describe('Test Engine behaviour', () => {
         engine.spawnHero();
         engine.spawnObstacle();
 
-        let hero = engine.hero;
+        let hero: Hero = engine.hero;
         hero.position.y = engine.obstacles[0].position.y;
 
         for (let i = 0; i < 90; i++) {

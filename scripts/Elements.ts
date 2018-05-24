@@ -14,7 +14,7 @@ export class Hero extends AnimatedGameObject implements Rigid {
     height: number = 100;
     position: Position = new Position(0, 0);
 
-    getCollisionArea() {
+    getCollisionArea(): CollisionArea {
         let center = new Position(this.position.x + this.width / 2, this.position.y + this.height / 2);
         return new CollisionArea(center, 60, 60);
     }
@@ -30,20 +30,20 @@ export class Obstacle extends StaticGameObject implements Rigid {
 
     private observer: Observer = null;
 
-    getCollisionArea() {
+    getCollisionArea(): CollisionArea {
         let center = new Position(this.position.x + this.width / 2, this.position.y + this.height / 2);
         return new CollisionArea(center, 50, 50);
     }
 
-    registerObserver(observer: Observer) {
+    registerObserver(observer: Observer): void {
         this.observer = observer;
     }
 
-    unregisterObserver(observer: Observer) {
+    unregisterObserver(observer: Observer): void {
         this.observer = null;
     }
 
-    notify() {
+    notify(): void {
         if (this.observer) {
             this.observer.update();
         }
@@ -61,20 +61,20 @@ class Plane extends StaticGameObject implements Rigid, Observable {
 
     private observer: Observer = null;
 
-    getCollisionArea() {
+    getCollisionArea(): CollisionArea {
         let center = new Position(this.position.x + this.width / 2, this.position.y + this.height / 2);
         return new CollisionArea(center, 160, 120);
     }
 
-    registerObserver(observer: Observer) {
+    registerObserver(observer: Observer): void {
         this.observer = observer;
     }
 
-    unregisterObserver(observer: Observer) {
+    unregisterObserver(observer: Observer): void {
         this.observer = null;
     }
 
-    notify() {
+    notify(): void {
         if (this.observer) {
             this.observer.update();
         }
@@ -98,16 +98,16 @@ class Score extends GameObject implements Observer {
 
     points: number = 0;
 
-    load() { }
+    load(): void { }
 
-    isLoaded() { return true }
+    isLoaded(): boolean { return true }
 
-    draw(context) {
+    draw(context): void {
         context.font = this.height + 'px Arial';
         context.strokeText("Points: " + this.points, this.position.x, this.position.y);
     }
 
-    update() {
+    update(): void {
         this.points++;
     }
 }
@@ -132,7 +132,7 @@ class EventRegistry {
         this.events = new Array<number>();
     }
 
-    size() {
+    size(): number {
         return this.events.length;
     }
 }
@@ -147,7 +147,7 @@ export class GameEngine {
     public eventRegistry: EventRegistry = new EventRegistry();
     constructor(public context: CanvasRenderingContext2D) { }
 
-    start() {
+    start(): void {
         this.spawnBackground();
         this.spawnScore();
         this.spawnHero();
@@ -186,7 +186,7 @@ export class GameEngine {
         this.animationFrame = window.requestAnimationFrame(() => this.draw());
     }
 
-    arrowKeyUp(e: KeyboardEvent) {
+    arrowKeyUp(e: KeyboardEvent): void {
         if (e.key === 'ArrowUp') {
             if (this.hero.position.y - 30 > 0) {
                 let target = new Position(this.hero.position.x, this.hero.position.y - 30)
@@ -195,19 +195,19 @@ export class GameEngine {
         }
     }
 
-    spawnScore() {
+    spawnScore(): void {
         this.score = new Score();
     }
 
-    spawnBackground() {
+    spawnBackground(): void {
         this.background = new Background();
     }
 
-    spawnHero() {
+    spawnHero(): void {
         this.hero = new Hero();
     }
 
-    spawnObstacle() {
+    spawnObstacle(): void {
         if (Math.floor((Math.random() * 10) + 1) % 3 === 0) {
             let obstacle: Plane = new Plane();
             obstacle.draw(this.context);
@@ -221,7 +221,7 @@ export class GameEngine {
         }
     }
 
-    garbageCollectObstacles() {
+    garbageCollectObstacles(): void {
         for (let idx = 0; idx < this.obstacles.length; idx++) {
             let obstacle = this.obstacles[idx];
             if (obstacle.position.x <= -obstacle.width) {
@@ -231,20 +231,20 @@ export class GameEngine {
         }
     }
 
-    slideObstacles() {
+    slideObstacles(): void {
         this.obstacles.slice().forEach(obstacle => {
             let position: Position = new Position(obstacle.position.x - 10, obstacle.position.y);
             obstacle.move(position);
         })
     }
 
-    detectCollision() {
+    detectCollision(): boolean {
         let firstObstacle = this.obstacles[0];
         let collider = new SimpleRectangleCollider(this.hero.getCollisionArea(), firstObstacle.getCollisionArea());
         return collider.collide();
     }
 
-    draw() {
+    draw(): void {
         this.animationFrame = window.requestAnimationFrame(() => this.draw());
 
         this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
@@ -257,7 +257,7 @@ export class GameEngine {
 
     }
 
-    stop() {
+    stop(): void {
         this.obstacles = new Array<Obstacle | Plane>();
         this.hero = null;
         this.eventRegistry.unregisterAllEvents();

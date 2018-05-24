@@ -1,10 +1,10 @@
 import { Position } from './Geometry';
 
 export abstract class GameObject {
-    name: string; // name of the object
-    width: number;
-    height: number;
-    position: Position;
+    name: string = ''; // name of the object
+    width: number = 0;
+    height: number = 0;
+    position: Position = null;
 
     abstract draw(context): void;
     abstract load(): void;
@@ -16,16 +16,12 @@ export abstract class GameObject {
 }
 
 export class StaticGameObject extends GameObject {
-    name: string; // name of the object
     media_path: string; // path to the png
-    width: number;
-    height: number;
-    position: Position;
 
     private image: HTMLImageElement = null;
     private imageLoaded: boolean = false;
 
-    load() {
+    load(): void {
         if (this.image === null)
             this.image = new Image();
         this.image.src = this.media_path;
@@ -50,11 +46,7 @@ export class StaticGameObject extends GameObject {
 }
 
 export class AnimatedGameObject extends GameObject {
-    name: string; // name of the object
     media_path: Array<string>; // path to the png
-    width: number;
-    height: number;
-    position: Position;
 
     public animationSpeed: number = 3;
     private animation: number = 0;
@@ -62,7 +54,7 @@ export class AnimatedGameObject extends GameObject {
     private images: Array<HTMLImageElement> = new Array<HTMLImageElement>();
     private loadedImages: Array<boolean> = new Array<boolean>();
 
-    load() {
+    load(): void {
         this.media_path.slice().forEach(
             (path, idx) => {
                 let image: HTMLImageElement = null;
